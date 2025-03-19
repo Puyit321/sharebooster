@@ -1,14 +1,19 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Share Boost</title>
-    <link rel="icon" href="https://i.imgur.com/zi15QL3.png">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="icon" href="https://i.imgur.com/zi15QL3.png">
+
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
@@ -20,225 +25,484 @@
                         success: '#00BA88',
                         warning: '#FFB800',
                     },
-                }
-            }
-        };
+                    dark: {
+                        bg: '#121212',
+                        text: '#F9FAFB',
+                        secondary: '#262626',
+                    }
+                },
+            },
+        }
     </script>
+
     <style>
         body {
             font-family: 'Outfit', sans-serif;
-            background-color: #121212;
-            color: white;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .form-container {
-            max-width: 600px;
+        .progress-bar {
             width: 100%;
-            background-color: #1f2937;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+            height: 4px;
+            background: #E5E7EB;
+            border-radius: 999px;
+            overflow: hidden;
         }
 
-        h1 {
-            color: #FF2C55;
-            font-size: 2.5rem;
-            text-align: center;
-            margin-bottom: 30px;
+        .progress-value {
+            height: 100%;
+            background: #FF2C55;
+            transition: width 0.3s ease;
         }
 
-        .form-label {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: #e5e7eb;
-            margin-bottom: 8px;
+        .nav-indicator {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .content-section.active {
             display: block;
         }
 
-        .input, .custom-dropdown select {
-            background-color: #2d3748;
-            color: white;
-            border: 2px solid #374151;
-            padding: 1rem;
-            width: 100%;
-            border-radius: 8px;
-            font-size: 1rem;
-            margin-bottom: 20px;
-            transition: background-color 0.3s, border-color 0.3s;
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .input::placeholder {
-            color: #A0AEC0;
+        .session-card {
+            transition: all 0.3s ease;
         }
 
-        .input:focus, .custom-dropdown select:focus {
-            border-color: #FF2C55;
-            background-color: #3b4a5d;
-            outline: none;
+        .session-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
 
-        .button {
-            padding: 1rem;
-            background-color: #FF2C55;
-            color: white;
-            font-weight: 700;
-            text-transform: uppercase;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.2s, background-color 0.3s;
-            width: 100%;
-            border: none;
-        }
-
-        .button:hover {
-            background-color: #e31a5b;
-            transform: scale(1.05);
-        }
-
-        .button:disabled {
-            background-color: #6B7280;
-            cursor: not-allowed;
-        }
-
-        .custom-dropdown {
+        .ripple {
             position: relative;
+            overflow: hidden;
         }
 
-        .custom-dropdown:after {
-            content: "▼";
+        .ripple:after {
+            content: "";
+            display: block;
             position: absolute;
-            top: 50%;
-            right: 15px;
-            transform: translateY(-50%);
-            font-size: 1.2rem;
-            color: #e5e7eb;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
             pointer-events: none;
+            background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
+            background-repeat: no-repeat;
+            background-position: 50%;
+            transform: scale(10, 10);
+            opacity: 0;
+            transition: transform .5s, opacity 1s;
         }
 
-        .result {
+        .ripple:active:after {
+            transform: scale(0, 0);
+            opacity: .3;
+            transition: 0s;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #FF2C55;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff1641;
+        }
+
+        .dark body {
+            background-color: #121212;
+            color: #F9FAFB;
+        }
+
+        .dark .bg-white {
+            background-color: #262626;
+        }
+
+        .dark .border {
+            border-color: #3f3f3f;
+        }
+
+        .dark .text-gray-500 {
+            color: #a3a3a3;
+        }
+
+        .dark .text-gray-600 {
+            color: #d4d4d4;
+        }
+
+        .dark .bg-gray-100 {
+            background-color: #3f3f3f;
+        }
+
+        .dark ::-webkit-scrollbar-track {
+            background: #333;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #f9fafb;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
             text-align: center;
-            font-size: 1rem;
-            margin-top: 20px;
+            min-width: 300px;
         }
 
-        .result.success {
-            color: #00BA88;
+        .modal-content.success {
+            background-color: #dcfce7;
+            color: #166534;
         }
 
-        .result.error {
+        .modal-content.error {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .dark .modal-content {
+            background-color: #262626;
+            color: #F9FAFB;
+        }
+
+        .dark .modal-content.success {
+            background-color: #166534;
+            color: #dcfce7;
+        }
+
+        .dark .modal-content.error {
+            background-color: #991b1b;
+            color: #fee2e2;
+        }
+
+        /* Notification Styling */
+        .notification-item {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background-color: #374151;
+            color: #fff;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .notification-item i {
             color: #FF2C55;
         }
 
-        @media (max-width: 640px) {
-            .form-container {
-                padding: 30px;
-            }
-
-            h1 {
-                font-size: 2rem;
-            }
+        .dark .notification-item {
+            background-color: #262626;
+            border: 1px solid #3f3f3f;
         }
     </style>
+
 </head>
 
-<body>
-    <div class="container">
-        <div class="form-container">
-            <h1>SHARE BOOST</h1>
-            <form id="share-boost-form" class="space-y-5">
-                <div>
-                    <label for="cookies" class="form-label">APPSTATE:</label>
-                    <input type="text" id="cookies" name="cookie" required placeholder="Enter your Appstate" class="input">
+<body class="bg-gray-50 dark:bg-dark-bg dark:text-dark-text">
+    <div class="max-w-md mx-auto min-h-screen pb-16 bg-white dark:bg-dark-secondary shadow-lg">
+        <header
+            class="p-4 border-b bg-white dark:bg-dark-secondary dark:border-gray-700 sticky top-0 z-10 backdrop-blur-lg bg-white/90 dark:bg-dark-secondary/90">
+            <div class="flex items-center justify-between">
+                <h1 class="text-xl font-semibold">Share Boost</h1>
+                <div class="flex items-center gap-2">
+                    <button class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                        id="themeToggle">
+                        <i data-lucide="sun" class="w-5 h-5"></i>
+                    </button>
                 </div>
-                <div>
-                    <label for="urls" class="form-label">POST LINK:</label>
-                    <input type="text" id="urls" name="url" required placeholder="Enter the Facebook post URL" class="input">
+            </div>
+        </header>
+
+        <div class="content-sections">
+            <section id="home-section" class="content-section active">
+                <div class="p-4">
+
+                    <form id="share-boost-form" class="mb-6 space-y-4">
+                        <div class="relative">
+                            <label
+                                class="text-sm text-gray-600 dark:text-gray-200 mb-1 block flex items-center gap-2">
+                                <i data-lucide="cookie" class="w-4 h-4"></i>
+                                APPSTATE:
+                            </label>
+                            <textarea id="cookies" name="cookie" rows="3"
+                                class="w-full p-3 rounded-lg border focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                placeholder="Enter your Appstate" required></textarea>
+                        </div>
+                        <div class="relative">
+                            <label
+                                class="text-sm text-gray-600 dark:text-gray-200 mb-1 block flex items-center gap-2">
+                                <i data-lucide="link" class="w-4 h-4"></i>
+                                POST LINK:
+                            </label>
+                            <input type="url" id="urls" name="url"
+                                class="w-full p-3 rounded-lg border focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                placeholder="Enter the Facebook post URL" required>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="relative">
+                                <label
+                                    class="text-sm text-gray-600 dark:text-gray-200 mb-1 block flex items-center gap-2">
+                                    <i data-lucide="hash" class="w-4 h-4"></i>
+                                    SHARE LIMIT:
+                                </label>
+                                <input type="number" id="amounts" name="amount"
+                                    class="w-full p-3 rounded-lg border focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                    placeholder="Number of shares" min="1" required>
+                            </div>
+                            <div class="relative">
+                                <label
+                                    class="text-sm text-gray-600 dark:text-gray-200 mb-1 block flex items-center gap-2">
+                                    <i data-lucide="timer" class="w-4 h-4"></i>
+                                    DELAY (seconds):
+                                </label>
+                                <input type="number" id="intervals" name="interval"
+                                    class="w-full p-3 rounded-lg border focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                    placeholder="Delay (seconds)" min="1" required>
+                            </div>
+                        </div>
+
+                        <div class="relative">
+                            <label
+                                class="text-sm text-gray-600 dark:text-gray-200 mb-1 block flex items-center gap-2">
+                                <i data-lucide="server" class="w-4 h-4"></i>
+                                SERVER:
+                            </label>
+                            <select id="server" name="server"
+                                class="w-full p-3 rounded-lg border focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <option value="server1">Server 1</option>
+                                <option value="server2">Server 2</option>
+                               <option value="server3">Server 3</option> 
+
+                            </select>
+                        </div>
+
+                        <button type="submit" id="submit-button"
+                            class="w-full bg-primary text-white py-3 rounded-lg font-medium hover:bg-primary/90 transition-colors ripple flex items-center justify-center gap-2"
+                            disabled>
+                            <i data-lucide="play" class="w-5 h-5"></i>
+                            START SHARING
+                        </button>
+                    </form>
                 </div>
-                <div>
-                    <label for="amounts" class="form-label">SHARE LIMIT:</label>
-                    <input type="number" id="amounts" name="amount" required placeholder="Number of shares" min="1" class="input">
+            </section>
+
+            <section id="notifications-section" class="content-section">
+                <div class="p-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="bell" class="w-5 h-5 text-primary"></i>
+                            <h2 class="text-lg font-semibold">Notifications</h2>
+                        </div>
+                    </div>
+                    <div id="notifications" class="space-y-4">
+                         <div class="notification-item">
+                            <i data-lucide="info" class="w-5 h-5"></i>
+                            <span>Welcome to Autosharee Stay tuned for updates.</span>
+                        </div>
+                        <div id="notifications" class="space-y-4">
+                         <div class="notification-item">
+                            <i data-lucide="info" class="w-5 h-5"></i>
+                            <span>New Update: New UI and responsive for android and pc. imong mama baho bilat</span>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <label for="intervals" class="form-label">DELAY:</label>
-                    <input type="number" id="intervals" name="interval" required placeholder="Delay (seconds)" min="1" class="input">
+            </section>
+        </div>
+
+        <nav
+            class="fixed bottom-0 left-0 right-0 bg-white dark:bg-dark-secondary border-t dark:border-gray-700 max-w-md mx-auto backdrop-blur-lg bg-white/90 dark:bg-dark-secondary/90">
+            <div class="relative">
+                <div class="flex justify-around items-center px-6 py-2">
+                    <a href="#" data-section="home"
+                        class="nav-item flex flex-col items-center text-gray-400 dark:text-gray-300 relative p-2">
+                        <i data-lucide="home" class="w-6 h-6"></i>
+                        <span class="text-xs mt-1">Home</span>
+                    </a>
+                    <a href="#" data-section="notifications"
+                        class="nav-item flex flex-col items-center text-primary relative p-2">
+                        <i data-lucide="bell" class="w-6 h-6"></i>
+                        <span class="text-xs mt-1">Notifications</span>
+                    </a>
                 </div>
-                <div class="custom-dropdown">
-                    <label for="server" class="form-label">SERVER:</label>
-                    <select id="server" name="server" required class="input">
-                        <option value="server1">Server 1</option>
-                        <option value="server2">Server 2</option>
-                    </select>
-                </div>
-                <button type="submit" id="submit-button" class="button" disabled>START SHARING</button>
-                <div id="result" class="result"></div>
-            </form>
+                <div class="nav-indicator absolute bottom-0 left-0 h-0.5 bg-primary transition-transform duration-300"
+                    style="width: 50%"></div>
+            </div>
+        </nav>
+
+        <div id="responseModal" class="modal">
+            <div class="modal-content" id="responseMessage"></div>
         </div>
     </div>
 
     <script>
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+
+        const storedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        if (storedTheme) {
+          html.classList.add(storedTheme);
+        }
+
+        if (html.classList.contains('dark')) {
+            themeToggle.innerHTML = '<i data-lucide="sun" class="w-5 h-5"></i>';
+        } else {
+            themeToggle.innerHTML = '<i data-lucide="moon" class="w-5 h-5"></i>';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                themeToggle.innerHTML = '<i data-lucide="moon" class="w-5 h-5"></i>';
+
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                themeToggle.innerHTML = '<i data-lucide="sun" class="w-5 h-5"></i>';
+
+            }
+            lucide.createIcons();
+        });
+
+        lucide.createIcons();
+
         const serverUrls = {
-            server1: 'https://7e7b5f57-44cd-4692-ad01-854abc0fe920-00-15psfpd8z8vde.janeway.replit.dev',
-            server2: 'https://burat-rvhg.onrender.com'
+            server1: 'https://server2-u8y4.onrender.com',
+            server2: 'https://burat-rvhg.onrender.com',
+        server3: 'https://server1-qmqz.onrender.com'
         };
 
         async function checkServerStatus() {
             const servers = document.querySelectorAll('#server option');
             let allDown = true;
+            const submitButton = document.getElementById('submit-button');
 
             for (const server of servers) {
                 try {
                     const response = await fetch(serverUrls[server.value]);
                     if (response.ok) {
-                        server.textContent = `${server.textContent} (active)`;
+                        server.textContent = `${server.textContent.split(' (')[0]} (active)`;
                         allDown = false;
                     } else {
-                        server.textContent = `${server.textContent} (down)`;
+                        server.textContent = `${server.textContent.split(' (')[0]} (down)`;
                     }
                 } catch {
-                    server.textContent = `${server.textContent} (down)`;
+                    server.textContent = `${server.textContent.split(' (')[0]} (down)`;
                 }
             }
 
-            document.getElementById('submit-button').disabled = allDown;
+            submitButton.disabled = allDown;
         }
 
         document.getElementById('share-boost-form').onsubmit = async function (event) {
             event.preventDefault();
-            const result = document.getElementById('result');
-            result.textContent = 'Processing...';
-            result.className = '';
+            const modal = document.getElementById('responseModal');
+            const message = document.getElementById('responseMessage');
+            const url = document.getElementById('urls').value;
+            const amount = parseInt(document.getElementById('amounts').value);
+            const cookie = document.getElementById('cookies').value;
+            const interval = parseInt(document.getElementById('intervals').value);
+            const serverValue = document.getElementById('server').value;
+
+            message.textContent = 'Processing...';
+            message.className = 'modal-content';
+            modal.style.display = 'flex';
 
             try {
-                const server = serverUrls[document.getElementById('server').value];
+                const server = serverUrls[serverValue];
                 const response = await fetch(`${server}/api/submit`, {
                     method: 'POST',
                     body: JSON.stringify({
-                        cookie: document.getElementById('cookies').value,
-                        url: document.getElementById('urls').value,
-                        amount: document.getElementById('amounts').value,
-                        interval: document.getElementById('intervals').value,
+                        cookie: cookie,
+                        url: url,
+                        amount: amount,
+                        interval: interval,
                     }),
                     headers: { 'Content-Type': 'application/json' },
                 });
 
                 const data = await response.json();
-                result.textContent = data.status === 200 ? 'Submitted successfully!' : `Error: ${data.message}`;
-                result.className = data.status === 200 ? 'success' : 'error';
-            } catch {
-                result.textContent = 'Network error, please try again.';
-                result.className = 'error';
+
+                if (data.status === 200) {
+                    message.textContent = 'Submitted successfully';
+                    message.className = 'modal-content success';
+
+                } else {
+                    message.textContent = `Error: ${data.message}`;
+                    message.className = 'modal-content error';
+                }
+            } catch (error) {
+                message.textContent = 'Network error, please try again.';
+                message.className = 'modal-content error';
+            } finally {
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                }, 3000);
             }
         };
 
-        window.onload = checkServerStatus;
+        window.onload = () => {
+            checkServerStatus();
+        }
+
+        const navItems = document.querySelectorAll('.nav-item');
+        const navIndicator = document.querySelector('.nav-indicator');
+        const contentSections = document.querySelectorAll('.content-section');
+
+        navItems.forEach(item => {
+            item.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                navItems.forEach(navItem => navItem.classList.remove('text-primary', 'dark:text-primary'));
+                this.classList.add('text-primary', 'dark:text-primary');
+
+                contentSections.forEach(section => section.classList.remove('active'));
+                document.getElementById(`${this.dataset.section}-section`).classList.add('active');
+
+                const index = Array.from(navItems).indexOf(this);
+                navIndicator.style.transform = `translateX(${index * 100}%)`;
+            });
+        });
     </script>
 </body>
 

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Share Boost</title>
+    <link rel="icon" href="https://i.imgur.com/zi15QL3.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        outfit: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#FF2C55',
+                        secondary: '#121212',
+                        success: '#00BA88',
+                        warning: '#FFB800',
+                    },
+                }
+            }
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #121212;
+            color: white;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .form-container {
+            max-width: 600px;
+            width: 100%;
+            background-color: #1f2937;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+        }
+
+        h1 {
+            color: #FF2C55;
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #e5e7eb;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .input, .custom-dropdown select {
+            background-color: #2d3748;
+            color: white;
+            border: 2px solid #374151;
+            padding: 1rem;
+            width: 100%;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .input::placeholder {
+            color: #A0AEC0;
+        }
+
+        .input:focus, .custom-dropdown select:focus {
+            border-color: #FF2C55;
+            background-color: #3b4a5d;
+            outline: none;
+        }
+
+        .button {
+            padding: 1rem;
+            background-color: #FF2C55;
+            color: white;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.3s;
+            width: 100%;
+            border: none;
+        }
+
+        .button:hover {
+            background-color: #e31a5b;
+            transform: scale(1.05);
+        }
+
+        .button:disabled {
+            background-color: #6B7280;
+            cursor: not-allowed;
+        }
+
+        .custom-dropdown {
+            position: relative;
+        }
+
+        .custom-dropdown:after {
+            content: "▼";
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            color: #e5e7eb;
+            pointer-events: none;
+        }
+
+        .result {
+            text-align: center;
+            font-size: 1rem;
+            margin-top: 20px;
+        }
+
+        .result.success {
+            color: #00BA88;
+        }
+
+        .result.error {
+            color: #FF2C55;
+        }
+
+        @media (max-width: 640px) {
+            .form-container {
+                padding: 30px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="form-container">
+            <h1>SHARE BOOST</h1>
+            <form id="share-boost-form" class="space-y-5">
+                <div>
+                    <label for="cookies" class="form-label">APPSTATE:</label>
+                    <input type="text" id="cookies" name="cookie" required placeholder="Enter your Appstate" class="input">
+                </div>
+                <div>
+                    <label for="urls" class="form-label">POST LINK:</label>
+                    <input type="text" id="urls" name="url" required placeholder="Enter the Facebook post URL" class="input">
+                </div>
+                <div>
+                    <label for="amounts" class="form-label">SHARE LIMIT:</label>
+                    <input type="number" id="amounts" name="amount" required placeholder="Number of shares" min="1" class="input">
+                </div>
+                <div>
+                    <label for="intervals" class="form-label">DELAY:</label>
+                    <input type="number" id="intervals" name="interval" required placeholder="Delay (seconds)" min="1" class="input">
+                </div>
+                <div class="custom-dropdown">
+                    <label for="server" class="form-label">SERVER:</label>
+                    <select id="server" name="server" required class="input">
+                        <option value="server1">Server 1</option>
+                        <option value="server2">Server 2</option>
+                    </select>
+                </div>
+                <button type="submit" id="submit-button" class="button" disabled>START SHARING</button>
+                <div id="result" class="result"></div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const serverUrls = {
+            server1: 'https://7e7b5f57-44cd-4692-ad01-854abc0fe920-00-15psfpd8z8vde.janeway.replit.dev',
+            server2: 'https://burat-rvhg.onrender.com'
+        };
+
+        async function checkServerStatus() {
+            const servers = document.querySelectorAll('#server option');
+            let allDown = true;
+
+            for (const server of servers) {
+                try {
+                    const response = await fetch(serverUrls[server.value]);
+                    if (response.ok) {
+                        server.textContent = `${server.textContent} (active)`;
+                        allDown = false;
+                    } else {
+                        server.textContent = `${server.textContent} (down)`;
+                    }
+                } catch {
+                    server.textContent = `${server.textContent} (down)`;
+                }
+            }
+
+            document.getElementById('submit-button').disabled = allDown;
+        }
+
+        document.getElementById('share-boost-form').onsubmit = async function (event) {
+            event.preventDefault();
+            const result = document.getElementById('result');
+            result.textContent = 'Processing...';
+            result.className = '';
+
+            try {
+                const server = serverUrls[document.getElementById('server').value];
+                const response = await fetch(`${server}/api/submit`, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        cookie: document.getElementById('cookies').value,
+                        url: document.getElementById('urls').value,
+                        amount: document.getElementById('amounts').value,
+                        interval: document.getElementById('intervals').value,
+                    }),
+                    headers: { 'Content-Type': 'application/json' },
+                });
+
+                const data = await response.json();
+                result.textContent = data.status === 200 ? 'Submitted successfully!' : `Error: ${data.message}`;
+                result.className = data.status === 200 ? 'success' : 'error';
+            } catch {
+                result.textContent = 'Network error, please try again.';
+                result.className = 'error';
+            }
+        };
+
+        window.onload = checkServerStatus;
+    </script>
+</body>
+
+</html>
